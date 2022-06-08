@@ -1,9 +1,11 @@
-import { Server } from "socket.io";
+import SocketIOFactory from './socket';
+import FasistyFactory from './fastify';
 
-const server = new Server();
 
-server.on("connection", () => {
-	console.log("connected")
-});
+function ServerFactory() {
+	const fastifyInstance = FasistyFactory();
 
-server.listen(Number(process.env.PORT) || 3001);
+	SocketIOFactory(fastifyInstance.server);
+}
+
+ServerFactory();
