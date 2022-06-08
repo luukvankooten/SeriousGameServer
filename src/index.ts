@@ -1,11 +1,10 @@
 import SocketIOFactory from './socket';
 import FasistyFactory from './fastify';
 
-
 function ServerFactory() {
-	const fastifyInstance = FasistyFactory();
+  const fastifyInstance = FasistyFactory();
 
-	SocketIOFactory(fastifyInstance.server);
+  SocketIOFactory(fastifyInstance.server);
 }
 
 ServerFactory();
