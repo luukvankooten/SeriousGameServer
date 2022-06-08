@@ -6,7 +6,7 @@ export default function FasistyFactory() {
     logger: true,
   });
 
-  RegisterRoomController(fastify);
+  fastify.register(RegisterRoomController);
 
   fastify.listen(Number(process.env.PORT) || 3001, (err, _address) => {
     if (err) {
