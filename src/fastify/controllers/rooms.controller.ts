@@ -1,21 +1,20 @@
 import {
-  FastifyInstance, FastifyPluginOptions
+  FastifyInstance, FastifyPluginOptions, FastifyRequest
 } from 'fastify';
 import * as RoomService from '../../services/rooms.service';
 
 async function GetRooms() {
-  return RoomService.GetRooms();
+  return Array.from(RoomService.GetRooms())
+    .filter(entry => !entry[1].isFull)
+    .map(entry => ({
+      id: entry[0],
+      ...entry[1]
+    }));
 }
 
 // _request: FastifyRequest, _reply: FastifyReply
-async function AddRoom() {
-  const room: RoomService.Room = {
-    room: 'one',
-    path: 'test',
-    isFull: false,
-  };
-
-  const id = RoomService.AddRoom(room);
+async function AddRoom(request: FastifyRequest<{Body: {name: string}}>) {
+  const id = RoomService.AddRoom(request.body.name);
 
   return { id, ...RoomService.GetRoom(id) };
 }
@@ -24,7 +23,16 @@ export default async function RegisterRoomController(
   server: FastifyInstance,
   _opts: FastifyPluginOptions,
 ) {
-  server.get('/rooms', GetRooms);
+  server.get('/rooms', {
+    schema: {
+      response: {
+        id: { type: 'string' },
+        name: { type: 'string' },
+        path: { type: 'string' },
+        isFull: { type: 'boolean' },
+      }
+    },
+  }, GetRooms);
 
   server.post('/rooms', {
     schema: {
@@ -42,10 +50,9 @@ export default async function RegisterRoomController(
       body: {
         type: 'object',
         properties: {
-          test: { type: 'string' },
-          otherValue: { type: 'boolean' },
+          name: { type: 'string' },
         },
-        required: ['test', 'otherValue'],
+        required: ['name']
       },
     },
   }, AddRoom);
