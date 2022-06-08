@@ -12,8 +12,17 @@
         "sourceType": "module"
     },
     "plugins": [
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "plugin:import/typescript",
     ],
     "rules": {
+    },
+    "settings": {
+        "import/resolver": {
+          "node": {
+            "extensions": [".ts"],
+            "moduleDirectory": ["node_modules", "src/"],
+          }
+        }
     }
 }
