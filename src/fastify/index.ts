@@ -1,5 +1,5 @@
 import Fastify from 'fastify';
-
+import RegisterRoomController from './controllers/rooms.controller';
 
 
 export default function FasistyFactory() {
@@ -7,7 +7,9 @@ export default function FasistyFactory() {
     logger: true
   });
 
-  fastify.listen(Number(process.env.PORT) || 3001, function (err, address) {
+  RegisterRoomController(fastify);
+
+  fastify.listen(Number(process.env.PORT) || 3001, function (err, _address) {
     if (err) {
       fastify.log.error(err)
       process.exit(1)
