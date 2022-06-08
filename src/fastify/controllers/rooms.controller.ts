@@ -1,5 +1,5 @@
 import {
-  FastifyInstance, FastifyPluginOptions, FastifyReply, FastifyRequest,
+  FastifyInstance, FastifyPluginOptions
 } from 'fastify';
 import * as RoomService from '../../services/rooms.service';
 
