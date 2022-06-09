@@ -13,7 +13,7 @@ async function GetRooms() {
 }
 
 // _request: FastifyRequest, _reply: FastifyReply
-async function AddRoom(request: FastifyRequest<{Body: {name: string}}>) {
+async function AddRoom(request: FastifyRequest<{ Body: { name: string } }>) {
   const id = RoomService.AddRoom(request.body.name);
 
   return { id, ...RoomService.GetRoom(id) };
@@ -26,9 +26,9 @@ export default async function RegisterRoomController(
   server.get('/rooms', {
     schema: {
       response: {
-        id: { type: 'string' },
+        id: { type: 'uuid' },
         name: { type: 'string' },
-        path: { type: 'string' },
+        uri: { type: 'uri' },
         isFull: { type: 'boolean' },
       }
     },
@@ -40,9 +40,9 @@ export default async function RegisterRoomController(
         200: {
           type: 'object',
           properties: {
-            id: { type: 'string' },
+            id: { type: 'uuid' },
             room: { type: 'string' },
-            path: { type: 'string' },
+            uri: { type: 'uri' },
             isFull: { type: 'boolean' },
           },
         },

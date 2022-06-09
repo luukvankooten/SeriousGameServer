@@ -1,6 +1,5 @@
 import * as crypto from 'crypto';
 
-
 export interface Room {
   name: string;
   uri: string;
@@ -24,7 +23,7 @@ export function GetRooms() {
 export function GetRoom(id: string) {
   const room = rooms.get(id);
 
-  if(!room) {
+  if (!room) {
     throw "Room does not exist";
   }
 
@@ -51,7 +50,7 @@ export function HasRoom(id: string) {
 export function JoinRoom(id: string) {
   const room = GetRoom(id);
 
-  if(room.connectionCount >= 5) {
+  if (room.connectionCount >= 5) {
     room.isFull = true;
 
     throw "Room is full";
@@ -65,7 +64,7 @@ export function LeaveRoom(id: string) {
 
   room.connectionCount -= 1;
 
-  if(room.connectionCount === 0) {
+  if (room.connectionCount === 0) {
     rooms.delete(id);
   }
 
