@@ -1,40 +1,42 @@
 import { Server, ServerOptions, Socket } from 'socket.io';
 import type { Server as HTTPSServer } from 'https';
 import http from 'http';
-import CreateRoomHandler from './handlers/room.handler';
-import { HasRoom, JoinRoom, LeaveRoom } from '../services/rooms.service';
+import CreateRoundHandler from './handlers/round.handler';
+import { HasRoom, JoinRoom } from '../services/rooms.service';
+import CreateDisconectionHandler from './handlers/disconnection.handler';
+import RegisterRoomGameStartedHandler from './events/handlers/room-game-started.handler';
+import CreateStartGameHandler from './handlers/start-game.handler';
 
-export default function SocketIOFactory(srv?: undefined | Partial<ServerOptions> | http.Server | HTTPSServer | number) {
+export default function SocketIOFactory(
+  srv?: undefined | Partial<ServerOptions> | http.Server | HTTPSServer | number,
+) {
   const server = new Server(srv);
 
   const onConnection = (socket: Socket) => {
     const id = socket.handshake.query.roomUri?.toString();
 
     if (!id) {
+      socket.disconnect(true);
       return;
     }
 
-    if (!HasRoom(id)) {
+    const joinRoom = JoinRoom(id, socket.id);
+
+    if (!joinRoom) {
+      socket.disconnect(true);
       return;
     }
 
-    if (socket.rooms.size > 2) {
-      return;
-    }
+    socket.emit('connectedHello', { test: 'hello' });
 
-    JoinRoom(id);
+    const [room, player] = joinRoom;
+
     socket.join(id);
-    console.log('joined room');
 
-    console.log(socket.id, socket.rooms);
+    CreateDisconectionHandler(server, socket, room);
 
-    CreateRoomHandler(server, socket);
-
-    const onDisconnection = () => {
-      LeaveRoom(id);
-    };
-
-    socket.on('disconnect', onDisconnection);
+    RegisterRoomGameStartedHandler(server, socket, room);
+    CreateStartGameHandler(server, socket, room);
   };
 
   server.on('connection', onConnection);
