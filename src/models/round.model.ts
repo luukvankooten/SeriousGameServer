@@ -16,4 +16,8 @@ export default class Round {
     this.players = players;
     this.game = game;
   }
+
+  addInvoice(invoice: Invoice) {
+    //TODO: implement this method
+  }
 }

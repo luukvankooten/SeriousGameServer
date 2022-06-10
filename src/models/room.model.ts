@@ -12,35 +12,43 @@ export default class Room extends EventEmitter {
   game: Game | undefined;
 
   constructor(id: string, name: string) {
-  	super();
+    super();
     this.id = id;
     this.name = name;
   }
 
+  isOpen(): boolean {
+    return !(this.players.length >= 5) || this.game !== undefined;
+  }
+
   addPlayer(player: Player) {
-    if (this.players.length >= 5) {
+    if (!this.isOpen()) {
       throw 'Room is full';
     }
 
     this.players.push(player);
 
-    this.emit('playerAdded', player);
+    this.emit('player:added', player);
+  }
+
+  private canStartGame() {
+    const { length } = this.players;
+
+    return (length === 4 || length === 5) && this.game === undefined;
   }
 
   startGame() {
-    const { length } = this.players;
-    
-    if (!(length === 4 || length === 5)) {
-      throw 'Cannot start game due too players length';
-    }
-
-    if (this.game !== undefined) {
-      throw 'Game already has been started';
+    if (!this.canStartGame()) {
+      throw 'The game could not be started';
     }
 
     this.game = new Game(this);
 
-    this.emit('gameStart', this.game);
+    if(this.players.length === 4) {
+      this.players.push(new Player('ai', this.game.rounds, this))
+    }
+
+    this.emit('game:started', this.game);
 
     return this.game;
   }
