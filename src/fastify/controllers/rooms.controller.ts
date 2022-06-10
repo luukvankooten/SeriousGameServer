@@ -1,14 +1,13 @@
-import {
-  FastifyInstance, FastifyPluginOptions, FastifyRequest,
-} from 'fastify';
+import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from 'fastify';
 import * as RoomService from '../../services/rooms.service';
 
 async function GetRooms() {
   return Array.from(RoomService.GetRooms())
-    .filter((entry) => !entry[1].isFull || !entry[1].isClosed)
+    .filter((entry) => entry[1].isOpen())
     .map((entry) => ({
       id: entry[0],
-      ...entry[1],
+      name: entry[1].name,
+      uri: `http://localhost:3000/?roomUri=${entry[0]}`,
     }));
 }
 
@@ -16,44 +15,52 @@ async function GetRooms() {
 async function AddRoom(request: FastifyRequest<{ Body: { name: string } }>) {
   const id = RoomService.AddRoom(request.body.name);
 
-  return { id, ...RoomService.GetRoom(id) };
+  const room = RoomService.GetRoom(id);
+
+  return { id, name: room.name, uri: `http://localhost:3000/?roomUri=${id}` };
 }
 
 export default async function RegisterRoomController(
   server: FastifyInstance,
   _opts: FastifyPluginOptions,
 ) {
-  server.get('/rooms', {
-    schema: {
-      response: {
-        id: { type: 'string', format: 'uuid' },
-        name: { type: 'string' },
-        uri: { type: 'string', format: 'uri' },
-        isFull: { type: 'boolean' },
+  server.get(
+    '/rooms',
+    {
+      schema: {
+        response: {
+          id: { type: 'string', format: 'uuid' },
+          name: { type: 'string' },
+          uri: { type: 'string', format: 'uri' },
+        },
       },
     },
-  }, GetRooms);
+    GetRooms,
+  );
 
-  server.post('/rooms', {
-    schema: {
-      response: {
-        200: {
-          type: 'object',
-          properties: {
-            id: { type: 'string', format: 'uuid' },
-            room: { type: 'string' },
-            uri: { type: 'string', format: 'uri' },
-            isFull: { type: 'boolean' },
+  server.post(
+    '/rooms',
+    {
+      schema: {
+        response: {
+          200: {
+            type: 'object',
+            properties: {
+              id: { type: 'string', format: 'uuid' },
+              name: { type: 'string' },
+              uri: { type: 'string', format: 'uri' },
+            },
           },
         },
-      },
-      body: {
-        type: 'object',
-        properties: {
-          name: { type: 'string' },
+        body: {
+          type: 'object',
+          properties: {
+            name: { type: 'string' },
+          },
+          required: ['name'],
         },
-        required: ['name'],
       },
     },
-  }, AddRoom);
+    AddRoom,
+  );
 }

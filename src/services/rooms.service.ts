@@ -1,30 +1,18 @@
 import * as crypto from 'crypto';
-
-export interface Room {
-  name: string;
-  uri: string;
-  connectionCount: number;
-  isFull: boolean;
-  isClosed: boolean;
-}
+import Player from '../models/player.model';
+import Room from '../models/room.model';
 
 const rooms: Map<string, Room> = new Map();
 
-rooms.set('bc636f3a-16cc-459a-8436-425f7ea2c5c3', {
-  name: 'Room 1',
-  uri: 'http://localhost:3000/?roomUri=bc636f3a-16cc-459a-8436-425f7ea2c5c3',
-  isFull: false,
-  connectionCount: 0,
-  isClosed: false,
-});
+rooms.set(
+  'bc636f3a-16cc-459a-8436-425f7ea2c5c3',
+  new Room('bc636f3a-16cc-459a-8436-425f7ea2c5c3', 'room 1'),
+);
 
-rooms.set('803f024d-fabc-4af6-a68b-1fb54e2f617c', {
-  name: 'Room 2',
-  uri: 'http://localhost:3000/?roomUri=803f024d-fabc-4af6-a68b-1fb54e2f617c',
-  isFull: false,
-  connectionCount: 0,
-  isClosed: false,
-});
+rooms.set(
+  '803f024d-fabc-4af6-a68b-1fb54e2f617c',
+  new Room('803f024d-fabc-4af6-a68b-1fb54e2f617c', 'room 2'),
+);
 
 export function GetRooms() {
   return rooms.entries();
@@ -43,13 +31,7 @@ export function GetRoom(id: string) {
 export function AddRoom(name: string) {
   const id = crypto.randomUUID();
 
-  rooms.set(id, {
-    name,
-    connectionCount: 0,
-    isFull: false,
-    uri: `http://localhost:3000/?roomUri=${id}`,
-    isClosed: false,
-  });
+  rooms.set(id, new Room(id, name));
 
   return id;
 }
@@ -58,34 +40,38 @@ export function HasRoom(id: string) {
   return rooms.has(id);
 }
 
-export function JoinRoom(id: string) {
+export function JoinRoom(id: string, playerId: string): [Room, Player] | void {
+  if (!HasRoom(id)) {
+    return;
+  }
+
   const room = GetRoom(id);
 
-  if (room.isClosed) {
-    throw 'Room is closed';
+  if (!room.isOpen()) {
+    return;
   }
 
-  if (room.connectionCount >= 5) {
-    room.isFull = true;
+  const player = new Player(playerId, [], room);
 
-    throw 'Room is full';
-  }
+  room.addPlayer(player);
 
-  room.connectionCount += 1;
+  return [room, player];
 }
 
-export function LeaveRoom(id: string) {
+export function LeaveRoom(id: string, playerId: string) {
   const room = GetRoom(id);
 
-  room.connectionCount -= 1;
+  const i = room.players.findIndex((p) => p.id === playerId);
 
-  if (room.connectionCount === 0) {
-    rooms.delete(id);
+  console.log(i, room);
+
+  if (i >= 0) {
+    delete room.players[i];
   }
 }
 
 export function CloseRoom(id: string) {
   const room = GetRoom(id);
 
-  room.isClosed = true;
+  //room.room
 }
