@@ -11,11 +11,19 @@ export interface Room {
 const rooms: Map<string, Room> = new Map();
 
 rooms.set('bc636f3a-16cc-459a-8436-425f7ea2c5c3', {
-  name: 'Ali',
-  uri: 'https://localhost:3000/?roomUri=bc636f3a-16cc-459a-8436-425f7ea2c5c3',
+  name: 'Room 1',
+  uri: 'http://localhost:3000/?roomUri=bc636f3a-16cc-459a-8436-425f7ea2c5c3',
   isFull: false,
   connectionCount: 0,
-  isClosed: false
+  isClosed: false,
+});
+
+rooms.set('803f024d-fabc-4af6-a68b-1fb54e2f617c', {
+  name: 'Room 2',
+  uri: 'http://localhost:3000/?roomUri=803f024d-fabc-4af6-a68b-1fb54e2f617c',
+  isFull: false,
+  connectionCount: 0,
+  isClosed: false,
 });
 
 export function GetRooms() {
@@ -26,7 +34,7 @@ export function GetRoom(id: string) {
   const room = rooms.get(id);
 
   if (!room) {
-    throw "Room does not exist";
+    throw 'Room does not exist';
   }
 
   return room;
@@ -40,7 +48,7 @@ export function AddRoom(name: string) {
     connectionCount: 0,
     isFull: false,
     uri: `http://localhost:3000/?roomUri=${id}`,
-    isClosed: false
+    isClosed: false,
   });
 
   return id;
@@ -54,15 +62,15 @@ export function JoinRoom(id: string) {
   const room = GetRoom(id);
 
   if (room.isClosed) {
-    throw 'Room is closed'
+    throw 'Room is closed';
   }
 
   if (room.connectionCount >= 5) {
     room.isFull = true;
 
     throw 'Room is full';
-  } 
-  
+  }
+
   room.connectionCount += 1;
 }
 

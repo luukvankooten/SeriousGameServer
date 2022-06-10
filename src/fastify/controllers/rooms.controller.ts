@@ -1,14 +1,14 @@
 import {
-  FastifyInstance, FastifyPluginOptions, FastifyRequest
+  FastifyInstance, FastifyPluginOptions, FastifyRequest,
 } from 'fastify';
 import * as RoomService from '../../services/rooms.service';
 
 async function GetRooms() {
   return Array.from(RoomService.GetRooms())
-    .filter(entry => !entry[1].isFull)
-    .map(entry => ({
+    .filter((entry) => !entry[1].isFull || !entry[1].isClosed)
+    .map((entry) => ({
       id: entry[0],
-      ...entry[1]
+      ...entry[1],
     }));
 }
 
@@ -26,11 +26,11 @@ export default async function RegisterRoomController(
   server.get('/rooms', {
     schema: {
       response: {
-        id: { type: 'uuid' },
+        id: { type: 'string', format: 'uuid' },
         name: { type: 'string' },
-        uri: { type: 'uri' },
+        uri: { type: 'string', format: 'uri' },
         isFull: { type: 'boolean' },
-      }
+      },
     },
   }, GetRooms);
 
@@ -40,9 +40,9 @@ export default async function RegisterRoomController(
         200: {
           type: 'object',
           properties: {
-            id: { type: 'uuid' },
+            id: { type: 'string', format: 'uuid' },
             room: { type: 'string' },
-            uri: { type: 'uri' },
+            uri: { type: 'string', format: 'uri' },
             isFull: { type: 'boolean' },
           },
         },
@@ -52,7 +52,7 @@ export default async function RegisterRoomController(
         properties: {
           name: { type: 'string' },
         },
-        required: ['name']
+        required: ['name'],
       },
     },
   }, AddRoom);

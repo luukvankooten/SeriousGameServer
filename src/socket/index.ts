@@ -2,36 +2,40 @@ import { Server, ServerOptions, Socket } from 'socket.io';
 import type { Server as HTTPSServer } from 'https';
 import http from 'http';
 import CreateRoomHandler from './handlers/room.handler';
-import { GetRooms, HasRoom, JoinRoom, LeaveRoom } from '../services/rooms.service';
+import { HasRoom, JoinRoom, LeaveRoom } from '../services/rooms.service';
 
 export default function SocketIOFactory(srv?: undefined | Partial<ServerOptions> | http.Server | HTTPSServer | number) {
   const server = new Server(srv);
 
-  const onConnection = (socket: Socket ) => {
+  const onConnection = (socket: Socket) => {
+    const id = socket.handshake.query.roomUri?.toString();
 
-    const roomUri = socket.handshake.query.roomUri?.toString();
-
-
-    if(!roomUri) {
+    if (!id) {
       return;
     }
 
-    if(!HasRoom(roomUri || '')) {
+    if (!HasRoom(id)) {
       return;
     }
 
-    JoinRoom(roomUri);
-    socket.join(roomUri);
-    
+    if (socket.rooms.size > 2) {
+      return;
+    }
+
+    JoinRoom(id);
+    socket.join(id);
+    console.log('joined room');
+
+    console.log(socket.id, socket.rooms);
 
     CreateRoomHandler(server, socket);
 
     const onDisconnection = () => {
-      LeaveRoom(roomUri);
-    }
+      LeaveRoom(id);
+    };
 
     socket.on('disconnect', onDisconnection);
-  }
+  };
 
   server.on('connection', onConnection);
 
