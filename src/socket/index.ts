@@ -29,7 +29,7 @@ export default function SocketIOFactory(
 
     socket.emit('connectedHello', { test: 'hello' });
 
-    const [room, player] = joinRoom;
+    const [room, _player] = joinRoom;
 
     socket.join(id);
 

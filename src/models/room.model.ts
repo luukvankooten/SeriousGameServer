@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 import Game from './game.model';
-import Player from './player.model';
+import Player, { Role } from './player.model';
 
 export default class Room extends EventEmitter {
   id: string;
@@ -31,6 +31,10 @@ export default class Room extends EventEmitter {
     this.emit('player:added', player);
   }
 
+  getPlayer(id: string) {
+  	return this.players.find(p => p.id === id);
+  }
+
   private canStartGame() {
     const { length } = this.players;
 
@@ -45,7 +49,7 @@ export default class Room extends EventEmitter {
     this.game = new Game(this);
 
     if(this.players.length === 4) {
-      this.players.push(new Player('ai', this.game.rounds, this))
+      this.players.push(new Player('ai', this.game.rounds, this, Role.CUSTOMER));
     }
 
     this.emit('game:started', this.game);

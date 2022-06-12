@@ -9,6 +9,6 @@ export default function RegisterGameNextRoundHandler(
   game.on('next', (game, event) => {
     console.log(game, event);
 
-    io.of(game.room.id).emit('game:next');
+    io.of(game.room.id).emit('game:next', {});
   });
 }

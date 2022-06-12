@@ -13,7 +13,7 @@ export default class Game extends EventEmitter {
   }
 
   nextRound() {
-    if (this.rounds.length >= 51) {
+    if (this.rounds.length >= 50) {
       throw 'Max rounds overwritten';
     }
 
@@ -26,12 +26,14 @@ export default class Game extends EventEmitter {
     return round;
   }
 
-  getActiveRound(): Round {
+  getActiveRound(): Round | undefined {
     const round = this.rounds[this.rounds.length - 1];
 
-    if (!round) {
-      throw 'No active round';
-    }
+    return round;
+  }
+
+  getPreviousRound(): Round | undefined {
+    const round = this.rounds[this.rounds.length - 2];
 
     return round;
   }
