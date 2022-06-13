@@ -63,10 +63,8 @@ export function LeaveRoom(id: string, playerId: string) {
 
   const i = room.players.findIndex((p) => p.id === playerId);
 
-  console.log(i, room);
-
   if (i >= 0) {
-    delete room.players[i];
+    room.players.splice(i, 1);
   }
 }
 
