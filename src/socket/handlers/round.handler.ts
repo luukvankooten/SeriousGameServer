@@ -14,12 +14,12 @@ export default function CreateRoundHandler(
 
     const currentRound = room.game?.getActiveRound();
 
-    if(!(currentPlayer && currentRound)) {
+    if (!(currentPlayer && currentRound)) {
       socket.to(room.id).emit('error');
       return;
     }
 
-    currentPlayer.setInvoice()
+    currentPlayer.setInvoice();
 
     new Invoice();
   });

@@ -32,7 +32,7 @@ export default class Room extends EventEmitter {
   }
 
   getPlayer(id: string) {
-  	return this.players.find(p => p.id === id);
+    return this.players.find((p) => p.id === id);
   }
 
   private canStartGame() {
@@ -48,8 +48,10 @@ export default class Room extends EventEmitter {
 
     this.game = new Game(this);
 
-    if(this.players.length === 4) {
-      this.players.push(new Player('ai', this.game.rounds, this, Role.CUSTOMER));
+    if (this.players.length === 4) {
+      this.players.push(
+        new Player('ai', this.game.rounds, this, Role.CUSTOMER),
+      );
     }
 
     this.emit('game:started', this.game);
