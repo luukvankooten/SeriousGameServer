@@ -1,5 +1,5 @@
 import * as crypto from 'crypto';
-import Player from '../models/player.model';
+import Player, { Role } from '../models/player.model';
 import Room from '../models/room.model';
 
 const rooms: Map<string, Room> = new Map();
@@ -51,7 +51,7 @@ export function JoinRoom(id: string, playerId: string): [Room, Player] | void {
     return;
   }
 
-  const player = new Player(playerId, [], room);
+  const player = new Player(playerId, [], room, Role.EMPTY);
 
   room.addPlayer(player);
 
@@ -71,7 +71,7 @@ export function LeaveRoom(id: string, playerId: string) {
 }
 
 export function CloseRoom(id: string) {
-  const room = GetRoom(id);
+  rooms.delete(id);
 
   //room.room
 }
