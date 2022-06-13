@@ -1,18 +1,18 @@
 import { Server, ServerOptions, Socket } from 'socket.io';
 import type { Server as HTTPSServer } from 'https';
 import http from 'http';
-import CreateRoundHandler from './handlers/round.handler';
-import { HasRoom, JoinRoom } from '../services/rooms.service';
+import { JoinRoom } from '../services/rooms.service';
 import CreateDisconectionHandler from './handlers/disconnection.handler';
 import RegisterRoomGameStartedHandler from './events/handlers/room-game-started.handler';
 import CreateStartGameHandler from './handlers/start-game.handler';
+import CreateAssignRoleHandler from './handlers/assign-role.handler';
 
 export default function SocketIOFactory(
   srv?: undefined | Partial<ServerOptions> | http.Server | HTTPSServer | number,
 ) {
   const server = new Server(srv);
 
-  const onConnection = (socket: Socket) => {
+  const onConnection = async (socket: Socket) => {
     const id = socket.handshake.query.roomUri?.toString();
 
     if (!id) {
@@ -27,16 +27,17 @@ export default function SocketIOFactory(
       return;
     }
 
-    socket.emit('connectedHello', { test: 'hello' });
-
     const [room, _player] = joinRoom;
 
     socket.join(id);
+
+    console.log(id, socket.id);
 
     CreateDisconectionHandler(server, socket, room);
 
     RegisterRoomGameStartedHandler(server, socket, room);
     CreateStartGameHandler(server, socket, room);
+    CreateAssignRoleHandler(server, socket, room);
   };
 
   server.on('connection', onConnection);

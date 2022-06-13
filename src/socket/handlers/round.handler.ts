@@ -1,5 +1,4 @@
 import { Server, Socket } from 'socket.io';
-import Invoice from '../../models/invoice.model';
 import Room from '../../models/room.model';
 
 export default function CreateRoundHandler(
@@ -9,18 +8,26 @@ export default function CreateRoundHandler(
 ) {
   socket.on('round:invoice', (data) => {
     console.log(data, room);
+    const order = Number(data.order);
+
+    if (order === NaN) {
+      socket.emit('error', {
+        message: 'order is not an number',
+      });
+      return;
+    }
 
     const currentPlayer = room.getPlayer(socket.id);
 
     const currentRound = room.game?.getActiveRound();
 
     if (!(currentPlayer && currentRound)) {
-      socket.to(room.id).emit('error');
+      socket.emit('error', {
+        message: 'No current player or current round',
+      });
       return;
     }
 
-    currentPlayer.setInvoice();
-
-    new Invoice();
+    currentRound.addOrder(order, currentPlayer);
   });
 }

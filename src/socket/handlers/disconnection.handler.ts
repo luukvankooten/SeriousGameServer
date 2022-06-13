@@ -9,7 +9,8 @@ export default function CreateDisconectionHandler(
 ) {
   const onDisconnection = () => {
     LeaveRoom(room.id, socket.id);
-    console.log(room.players, socket.id);
+    socket.removeAllListeners();
+    console.log(socket.listeners.length);
   };
 
   socket.on('disconnect', onDisconnection);
