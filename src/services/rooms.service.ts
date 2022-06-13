@@ -72,6 +72,4 @@ export function LeaveRoom(id: string, playerId: string) {
 
 export function CloseRoom(id: string) {
   rooms.delete(id);
-
-  //room.room
 }
