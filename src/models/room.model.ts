@@ -38,7 +38,11 @@ export default class Room extends EventEmitter {
   private canStartGame() {
     const { length } = this.players;
 
-    return (length === 4 || length === 5) && this.game === undefined;
+    const someEmptyRole = this.players.some((p) => p.role === Role.EMPTY);
+
+    return (
+      (length === 4 || length === 5) && this.game === undefined && someEmptyRole
+    );
   }
 
   startGame() {
