@@ -7,27 +7,48 @@ export enum Role {
   DISTRIBUTER,
   MANUFACTURER,
   CUSTOMER,
+  EMPTY,
 }
 
 type RoleString =
   | 'retailer'
   | 'wholesaler'
-  | 'distrinuter'
+  | 'distributer'
   | 'manufacture'
-  | 'customer';
+  | 'customer'
+  | 'empty';
 
-export function roleFromString(role: RoleString): Role {
+export function roleFromString(role: string | undefined): Role | undefined {
   switch (role) {
     case 'retailer':
       return Role.RETAILER;
     case 'wholesaler':
       return Role.WHOLESALER;
-    case 'distrinuter':
+    case 'distributer':
       return Role.DISTRIBUTER;
     case 'manufacture':
       return Role.MANUFACTURER;
     case 'customer':
       return Role.CUSTOMER;
+    default:
+      return undefined;
+  }
+}
+
+export function roleToString(role: Role): RoleString {
+  switch (role) {
+    case Role.CUSTOMER:
+      return 'customer';
+    case Role.DISTRIBUTER:
+      return 'distributer';
+    case Role.WHOLESALER:
+      return 'wholesaler';
+    case Role.RETAILER:
+      return 'retailer';
+    case Role.MANUFACTURER:
+      return 'manufacture';
+    case Role.EMPTY:
+      return 'empty';
   }
 }
 

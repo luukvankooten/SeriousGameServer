@@ -21,7 +21,7 @@ export default class Game extends EventEmitter {
 
     this.rounds.push(round);
 
-    this.emit('next');
+    this.emit('next', round);
 
     return round;
   }
@@ -33,6 +33,12 @@ export default class Game extends EventEmitter {
   }
 
   getPreviousRound(): Round | undefined {
+    const round = this.rounds[this.rounds.length - 2];
+
+    return round;
+  }
+
+  getTwoRoundsBack(): Round | undefined {
     const round = this.rounds[this.rounds.length - 2];
 
     return round;

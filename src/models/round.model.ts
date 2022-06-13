@@ -1,14 +1,14 @@
 import Player from './player.model';
-import Invoice from './invoice.model';
 import Game from './game.model';
 import EventEmitter from 'events';
+import Order from './order.model';
 
 export default class Round extends EventEmitter {
   number: number;
 
   players: Player[];
 
-  invoices: Invoice[] = [];
+  orders: Order[] = [];
 
   game: Game;
 
@@ -19,34 +19,22 @@ export default class Round extends EventEmitter {
     this.game = game;
   }
 
-  addInvoice(order: number, player: Player) {
+  addOrder(order: number, player: Player) {
     if (!this.players.includes(player)) {
       throw 'Player not in room';
     }
 
-    const i = this.invoices.findIndex((i) => i.player === player);
+    const i = this.orders.findIndex((i) => i.player === player);
 
     if (i !== -1) {
-      delete this.invoices[i];
+      delete this.orders[i];
     }
 
-    const pInvoice = this.game
-      .getPreviousRound()
-      ?.invoices.find((i) => i.player === player);
+    const orderInstance = new Order(order, player, this);
+    this.orders.push(orderInstance);
+    this.emit('invoice:added', orderInstance);
 
-    const backlog = pInvoice?.backlog ?? 0;
-
-    const stock = pInvoice?.stock ?? 0;
-
-    const invoice = new Invoice(this, player, 0, 0);
-
-    if (stock === 0 && backlog > 0) {
-    }
-
-    this.invoices.push(invoice);
-    this.emit('invoice:added', invoice);
-
-    if (this.invoices.length === this.players.length) {
+    if (this.orders.length === this.players.length) {
       this.game.nextRound();
     }
   }
