@@ -18,7 +18,7 @@ type RoleString =
   | 'customer'
   | 'empty';
 
-export function roleFromString(role: string | undefined): Role | undefined {
+export function roleFromString(role: string | undefined): Role {
   switch (role) {
     case 'retailer':
       return Role.RETAILER;
@@ -31,7 +31,7 @@ export function roleFromString(role: string | undefined): Role | undefined {
     case 'customer':
       return Role.CUSTOMER;
     default:
-      return undefined;
+      return Role.EMPTY;
   }
 }
 
@@ -47,7 +47,7 @@ export function roleToString(role: Role): RoleString {
       return 'retailer';
     case Role.MANUFACTURER:
       return 'manufacture';
-    case Role.EMPTY:
+    default:
       return 'empty';
   }
 }

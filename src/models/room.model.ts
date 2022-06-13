@@ -32,6 +32,7 @@ export default class Room extends EventEmitter {
   }
 
   getPlayer(id: string) {
+    console.log(id);
     return this.players.find((p) => p.id === id);
   }
 
