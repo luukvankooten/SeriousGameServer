@@ -27,7 +27,7 @@ export default class Round extends EventEmitter {
     const i = this.orders.findIndex((i) => i.player === player);
 
     if (i !== -1) {
-      delete this.orders[i];
+      this.orders.splice(i);
     }
 
     const orderInstance = new Order(order, player, this);

@@ -64,7 +64,7 @@ export function LeaveRoom(id: string, playerId: string) {
   const i = room.players.findIndex((p) => p.id === playerId);
 
   if (i >= 0) {
-    room.players.splice(i, 1);
+    room.players.splice(i);
   }
 }
 
