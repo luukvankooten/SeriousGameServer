@@ -10,10 +10,16 @@ export default class Game extends EventEmitter {
   constructor(room: Room) {
     super();
     this.room = room;
+    //Push the first round on init
+    this.rounds.push(new Round(this.rounds.length, room.players, this));
+  }
+
+  maxRounds() {
+    return this.rounds.length >= 50;
   }
 
   nextRound() {
-    if (this.rounds.length >= 50) {
+    if (this.maxRounds()) {
       throw 'Max rounds overwritten';
     }
 
@@ -33,12 +39,6 @@ export default class Game extends EventEmitter {
   }
 
   getPreviousRound(): Round | undefined {
-    const round = this.rounds[this.rounds.length - 2];
-
-    return round;
-  }
-
-  getTwoRoundsBack(): Round | undefined {
     const round = this.rounds[this.rounds.length - 2];
 
     return round;

@@ -3,9 +3,9 @@ import type { Server as HTTPSServer } from 'https';
 import http from 'http';
 import { JoinRoom } from '../services/rooms.service';
 import CreateDisconectionHandler from './handlers/disconnection.handler';
-import RegisterRoomGameStartedHandler from './events/handlers/room-game-started.handler';
 import CreateStartGameHandler from './handlers/start-game.handler';
 import CreateAssignRoleHandler from './handlers/assign-role.handler';
+import CreateRoundHandler from './handlers/round.handler';
 
 export default function SocketIOFactory(
   srv?: undefined | Partial<ServerOptions> | http.Server | HTTPSServer | number,
@@ -27,17 +27,14 @@ export default function SocketIOFactory(
       return;
     }
 
-    const [room, _player] = joinRoom;
+    const [room] = joinRoom;
 
     socket.join(id);
 
-    console.log(id, socket.id);
-
     CreateDisconectionHandler(server, socket, room);
-
-    RegisterRoomGameStartedHandler(server, socket, room);
     CreateStartGameHandler(server, socket, room);
     CreateAssignRoleHandler(server, socket, room);
+    CreateRoundHandler(server, socket, room);
   };
 
   server.on('connection', onConnection);

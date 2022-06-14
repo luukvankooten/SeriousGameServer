@@ -1,5 +1,5 @@
 import { Server, Socket } from 'socket.io';
-import { roleFromString } from '../../models/player.model';
+import { roleFromString, roleToString } from '../../models/player.model';
 import Room from '../../models/room.model';
 
 export default function CreateAssignRoleHandler(
@@ -7,21 +7,19 @@ export default function CreateAssignRoleHandler(
   socket: Socket,
   room: Room,
 ) {
-  socket.on('role:assign', (data, event) => {
+  socket.on('role:assign', (data) => {
     const role = roleFromString(String(data.role));
 
-    console.log(socket.id, room.players);
-    const user = room.getPlayer(socket.id);
+    try {
+      const user = room.getPlayer(socket.id);
 
-    if (!user) {
+      user?.assignRole(role);
+    } catch (e) {
       socket.emit('error', {
-        message: 'No player found',
+        message: 'Role already assigned',
       });
-      return;
+
+      console.error(e);
     }
-
-    user.role = role;
-
-    console.log(user);
   });
 }

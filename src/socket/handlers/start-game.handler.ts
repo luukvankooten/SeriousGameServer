@@ -1,17 +1,20 @@
 import { Server, Socket } from 'socket.io';
 import Room from '../../models/room.model';
+import RegisterRoomGameStartedHandler from '../events/handlers/room-game-started.handler';
 
 export default function CreateStartGameHandler(
-  _io: Server,
+  io: Server,
   socket: Socket,
   room: Room,
 ) {
-  socket.on('game:start', (arg) => {
+  socket.once('game:start', () => {
+    const [handler] = RegisterRoomGameStartedHandler(io, socket, room);
     try {
       room.startGame();
-      socket.emit('game:started');
     } catch (e) {
       socket.emit('error', e);
+      console.error(e);
+      room.removeListener('game:started', handler);
     }
   });
 }

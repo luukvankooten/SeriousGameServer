@@ -1,8 +1,8 @@
 import { Server, Socket } from 'socket.io';
-import RegisterCustomerOrderHandler from '../../../events/handlers/customer-order.handler';
+import CustomerAiOrderHandler from '../../../events/handlers/customer-order.handler';
 import Game from '../../../models/game.model';
+import { roleToString } from '../../../models/player.model';
 import Room from '../../../models/room.model';
-import CreateRoundHandler from '../../handlers/round.handler';
 import RegisterGameNextRoundHandler from './game-next-round.handler';
 
 export default function RegisterRoomGameStartedHandler(
@@ -10,14 +10,22 @@ export default function RegisterRoomGameStartedHandler(
   socket: Socket,
   room: Room,
 ) {
-  const handler = (game: Game, event: Room) => {
+  const aiHandler = CustomerAiOrderHandler();
+  const handler = (game: Game) => {
     //Register if game is started
     RegisterGameNextRoundHandler(io, socket, game);
-    CreateRoundHandler(io, socket, room);
-    RegisterCustomerOrderHandler(game);
+    game.on('next', () => aiHandler(game));
 
-    io.to(room.id).emit('game:started', game.room.players);
+    const players = room.players.map((player) => ({
+      id: player.id,
+      role: roleToString(player.role),
+    }));
+
+    io.to(room.id).emit('game:started', players);
   };
 
   room.on('game:started', handler);
+  room.once('game:started', aiHandler);
+
+  return [handler];
 }

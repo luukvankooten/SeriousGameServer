@@ -15,6 +15,7 @@ export default class Room extends EventEmitter {
     super();
     this.id = id;
     this.name = name;
+    this.emit('room:created');
   }
 
   isOpen(): boolean {
@@ -38,10 +39,10 @@ export default class Room extends EventEmitter {
   private canStartGame() {
     const { length } = this.players;
 
-    const someEmptyRole = this.players.some((p) => p.role === Role.EMPTY);
+    const nonEmptyRoles = this.players.some((p) => p.role !== Role.EMPTY);
 
     return (
-      (length === 4 || length === 5) && this.game === undefined && someEmptyRole
+      (length === 4 || length === 5) && this.game === undefined && nonEmptyRoles
     );
   }
 

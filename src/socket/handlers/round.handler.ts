@@ -7,7 +7,6 @@ export default function CreateRoundHandler(
   room: Room,
 ) {
   socket.on('round:invoice', (data) => {
-    console.log(data, room);
     const order = Number(data.order);
 
     if (order === NaN) {

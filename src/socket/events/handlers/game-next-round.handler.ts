@@ -9,6 +9,11 @@ export default function RegisterGameNextRoundHandler(
 ) {
   game.on('next', (round: Round) => {
     //By round next emit the previous round, because the results are in then
-    io.of(game.room.id).emit('round:next', game.getPreviousRound());
+    const orders = round.game.getPreviousRound()?.orders.map((o) => ({
+      player_id: o.player.id,
+      order: o.order,
+    }));
+
+    io.in(game.room.id).emit('round:next', orders);
   });
 }

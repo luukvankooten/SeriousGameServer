@@ -34,7 +34,7 @@ export default class Round extends EventEmitter {
     this.orders.push(orderInstance);
     this.emit('invoice:added', orderInstance);
 
-    if (this.orders.length === this.players.length) {
+    if (this.orders.length === this.players.length && !this.game.maxRounds()) {
       this.game.nextRound();
     }
   }

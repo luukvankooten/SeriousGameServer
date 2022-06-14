@@ -67,4 +67,12 @@ export default class Player {
     this.room = room;
     this.role = role;
   }
+
+  assignRole(role: Role) {
+    if (this.room.players.some((p) => p.role === role)) {
+      throw 'Role already in use';
+    }
+
+    this.role = role;
+  }
 }
