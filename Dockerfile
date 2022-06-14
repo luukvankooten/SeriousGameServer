@@ -5,6 +5,7 @@ WORKDIR /usr/src/app
 COPY . .
 
 RUN npm i -g @vercel/ncc
+RUN npm ci
 
 RUN ncc build src/index.ts -o dist
 
