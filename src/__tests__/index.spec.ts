@@ -98,7 +98,7 @@ describe('test socket connection flow', () => {
     server.close();
   });
 
-  it('test gameplay', (done) => {
+  it('test first round', (done) => {
     p1.on('game:started', () => {
       p1.emit('round:invoice', { order: 1 });
     });
@@ -113,7 +113,29 @@ describe('test socket connection flow', () => {
     });
 
     p4.on('round:next', (orders) => {
-      console.log(orders);
+      expect(orders).toEqual(
+        // 1
+        expect.arrayContaining([
+          // 2
+          expect.objectContaining({
+            player_id: p1.id,
+            order: 1, // 4
+          }),
+          expect.objectContaining({
+            player_id: p2.id,
+            order: 1, // 4
+          }),
+          expect.objectContaining({
+            player_id: p3.id,
+            order: 1, // 4
+          }),
+          expect.objectContaining({
+            player_id: p4.id,
+            order: 1, // 4
+          }),
+        ]),
+      );
+
       done();
     });
 
