@@ -8,12 +8,14 @@ export default function FasistyFactory() {
 
   fastify.register(RegisterRoomController);
 
-  fastify.listen(Number(process.env.PORT) || 3001, (err, _address) => {
-    if (err) {
-      fastify.log.error(err);
-      process.exit(1);
-    }
-  });
+  fastify.listen(
+    { port: Number(process.env.PORT) || 3001, host: '0.0.0.0' },
+    (err: any) => {
+      if (err) {
+        fastify.log.error(err);
+      }
+    },
+  );
 
   return fastify;
 }

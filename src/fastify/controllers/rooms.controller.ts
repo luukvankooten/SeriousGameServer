@@ -7,7 +7,7 @@ async function GetRooms() {
     .map((entry) => ({
       id: entry[0],
       name: entry[1].name,
-      uri: `http://localhost:3000/?roomUri=${entry[0]}`,
+      uri: `${process.env.APP_URL}/?roomUri=${entry[0]}`,
     }));
 }
 
@@ -17,7 +17,11 @@ async function AddRoom(request: FastifyRequest<{ Body: { name: string } }>) {
 
   const room = RoomService.GetRoom(id);
 
-  return { id, name: room.name, uri: `http://localhost:3000/?roomUri=${id}` };
+  return {
+    id,
+    name: room.name,
+    uri: `${process.env.APP_URL}/?roomUri=${id}`,
+  };
 }
 
 export default async function RegisterRoomController(
