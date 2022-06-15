@@ -6,12 +6,23 @@ export enum OrderType {
   PROVIDED,
 }
 
-export function fromString(order: 'reqeusted' | 'provided' | any): OrderType {
+export type StringOrder = 'requested' | 'provided';
+
+export function orderTypeFromString(order: StringOrder | any): OrderType {
   switch (order) {
     case 'requested':
       return OrderType.REQUESTED;
     default:
       return OrderType.PROVIDED;
+  }
+}
+
+export function orderTypeToString(type: OrderType): StringOrder {
+  switch (type) {
+    case OrderType.REQUESTED:
+      return 'requested';
+    default:
+      return 'provided';
   }
 }
 

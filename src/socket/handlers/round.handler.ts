@@ -1,5 +1,5 @@
 import { Server, Socket } from 'socket.io';
-import { fromString } from '../../models/order.model';
+import { orderTypeFromString } from '../../models/order.model';
 import Room from '../../models/room.model';
 
 export default function CreateRoundHandler(
@@ -9,7 +9,7 @@ export default function CreateRoundHandler(
 ) {
   socket.on('round:invoice', (data) => {
     const order = Number(data.order);
-    const type = fromString(data.type);
+    const type = orderTypeFromString(data.type);
 
     if (order === NaN) {
       socket.emit('error', {

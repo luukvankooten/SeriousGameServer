@@ -1,5 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import Game from '../../../models/game.model';
+import { orderTypeToString } from '../../../models/order.model';
 import Round from '../../../models/round.model';
 
 export default function RegisterGameNextRoundHandler(
@@ -12,6 +13,7 @@ export default function RegisterGameNextRoundHandler(
     const orders = round.game.getPreviousRound()?.orders.map((o) => ({
       player_id: o.player.id,
       order: o.order,
+      type: orderTypeToString(o.type),
     }));
 
     io.in(game.room.id).emit('round:next', orders);
