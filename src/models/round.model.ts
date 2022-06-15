@@ -22,7 +22,7 @@ export default class Round extends EventEmitter {
   addOrder(
     order: number,
     player: Player,
-    type: OrderType = OrderType.REQUESTED,
+    type: OrderType = OrderType.PROVIDED,
   ) {
     if (!this.players.includes(player)) {
       throw 'Player not in room';

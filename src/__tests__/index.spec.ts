@@ -3,6 +3,7 @@ import SocketIOFactory from '../socket';
 import { io, Socket as ClientSocket } from 'socket.io-client';
 import { AddressInfo } from 'net';
 import { Socket } from 'socket.io';
+import { OrderType, orderTypeToString } from '../models/order.model';
 
 describe('test socket connection flow', () => {
   let server: ReturnType<typeof SocketIOFactory>,
@@ -94,46 +95,43 @@ describe('test socket connection flow', () => {
     server.close();
   });
 
-  const data = ([] as { num: number }[]).fill(
-    {
-      num: 1,
-    },
-    0,
-    49,
-  );
-
-  it.each(data)('test first round', ({ num }, done: any) => {
+  it('test first round', (done) => {
     p1.on('game:started', () => {
-      p1.emit('round:invoice', { order: num });
+      p1.emit('round:invoice', { order: 1 });
     });
     p2.on('game:started', () => {
-      p2.emit('round:invoice', { order: num });
+      p2.emit('round:invoice', { order: 1 });
     });
     p3.on('game:started', () => {
-      p3.emit('round:invoice', { order: num });
+      p3.emit('round:invoice', { order: 1 });
     });
     p4.on('game:started', () => {
-      p4.emit('round:invoice', { order: num });
+      p4.emit('round:invoice', { order: 1 });
     });
 
     p4.on('round:next', (orders) => {
+      console.log(orders);
       expect(orders).toEqual(
         expect.arrayContaining([
           expect.objectContaining({
             player_id: p1.id,
             order: 1,
+            type: orderTypeToString(OrderType.PROVIDED),
           }),
           expect.objectContaining({
             player_id: p2.id,
             order: 1,
+            type: orderTypeToString(OrderType.PROVIDED),
           }),
           expect.objectContaining({
             player_id: p3.id,
             order: 1,
+            type: orderTypeToString(OrderType.PROVIDED),
           }),
           expect.objectContaining({
             player_id: p4.id,
             order: 1,
+            type: orderTypeToString(OrderType.PROVIDED),
           }),
         ]),
       );
