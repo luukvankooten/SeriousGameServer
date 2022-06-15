@@ -72,22 +72,18 @@ describe('test socket connection flow', () => {
 
   beforeAll(() => {
     p1.emit('role:assign', { role: 'retailer' });
-    // ps1.on('role:assign', done);
   });
 
   beforeAll(() => {
     p2.emit('role:assign', { role: 'wholesaler' });
-    // ps2.on('role:assign', done);
   });
 
   beforeAll(() => {
     p3.emit('role:assign', { role: 'distributer' });
-    // ps3.on('role:assign', done);
   });
 
   beforeAll(() => {
     p4.emit('role:assign', { role: 'manufacture' });
-    // ps4.on('role:assign', done);
   });
 
   afterAll(() => {
@@ -98,40 +94,46 @@ describe('test socket connection flow', () => {
     server.close();
   });
 
-  it('test first round', (done) => {
+  const data = ([] as { num: number }[]).fill(
+    {
+      num: 1,
+    },
+    0,
+    49,
+  );
+
+  it.each(data)('test first round', ({ num }, done: any) => {
     p1.on('game:started', () => {
-      p1.emit('round:invoice', { order: 1 });
+      p1.emit('round:invoice', { order: num });
     });
     p2.on('game:started', () => {
-      p2.emit('round:invoice', { order: 1 });
+      p2.emit('round:invoice', { order: num });
     });
     p3.on('game:started', () => {
-      p3.emit('round:invoice', { order: 1 });
+      p3.emit('round:invoice', { order: num });
     });
     p4.on('game:started', () => {
-      p4.emit('round:invoice', { order: 1 });
+      p4.emit('round:invoice', { order: num });
     });
 
     p4.on('round:next', (orders) => {
       expect(orders).toEqual(
-        // 1
         expect.arrayContaining([
-          // 2
           expect.objectContaining({
             player_id: p1.id,
-            order: 1, // 4
+            order: 1,
           }),
           expect.objectContaining({
             player_id: p2.id,
-            order: 1, // 4
+            order: 1,
           }),
           expect.objectContaining({
             player_id: p3.id,
-            order: 1, // 4
+            order: 1,
           }),
           expect.objectContaining({
             player_id: p4.id,
-            order: 1, // 4
+            order: 1,
           }),
         ]),
       );

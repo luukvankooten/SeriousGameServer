@@ -1,7 +1,7 @@
 import Player from './player.model';
 import Game from './game.model';
 import EventEmitter from 'events';
-import Order from './order.model';
+import Order, { OrderType } from './order.model';
 
 export default class Round extends EventEmitter {
   number: number;
@@ -19,7 +19,11 @@ export default class Round extends EventEmitter {
     this.game = game;
   }
 
-  addOrder(order: number, player: Player) {
+  addOrder(
+    order: number,
+    player: Player,
+    type: OrderType = OrderType.REQUESTED,
+  ) {
     if (!this.players.includes(player)) {
       throw 'Player not in room';
     }
@@ -30,7 +34,7 @@ export default class Round extends EventEmitter {
       this.orders.splice(i);
     }
 
-    const orderInstance = new Order(order, player, this);
+    const orderInstance = new Order(order, player, this, type);
     this.orders.push(orderInstance);
     this.emit('invoice:added', orderInstance);
 
