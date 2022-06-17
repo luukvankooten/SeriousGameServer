@@ -12,13 +12,17 @@ export default function CreateAssignRoleHandler(
 
     try {
       const user = room.getPlayer(socket.id);
-
       user?.assignRole(role);
-    } catch (e) {
-      socket.emit('error', {
-        message: 'Role already assigned',
+
+      socket.emit('role:assign-ok', {
+        message: 'Role assigned',
       });
 
+      io.to(room.id).emit('role:assigned', roleToString(role));
+    } catch (e) {
+      socket.emit('role:assign-error', {
+        message: 'Role already assigned',
+      });
       console.error(e);
     }
   });

@@ -1,4 +1,5 @@
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from 'fastify';
+import { Role, roleToString } from '../../models/player.model';
 import * as RoomService from '../../services/rooms.service';
 
 async function GetRooms() {
@@ -9,6 +10,14 @@ async function GetRooms() {
       name: entry[1].name,
       uri: `${process.env.APP_URL}/?roomUri=${entry[0]}`,
     }));
+}
+
+async function GetAvailableRolesInRoom(
+  request: FastifyRequest<{ Querystring: { roomUri: string } }>,
+) {
+  return RoomService.GetRoom(request.query.roomUri)
+    .players.filter((x) => x.role !== Role.EMPTY)
+    .map((x) => roleToString(x.role));
 }
 
 // _request: FastifyRequest, _reply: FastifyReply
@@ -66,5 +75,17 @@ export default async function RegisterRoomController(
       },
     },
     AddRoom,
+  );
+
+  server.get(
+    '/roles-unavailable',
+    {
+      schema: {
+        response: {
+          role: { type: 'array' },
+        },
+      },
+    },
+    GetAvailableRolesInRoom,
   );
 }
