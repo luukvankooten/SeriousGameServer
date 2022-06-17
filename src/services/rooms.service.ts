@@ -66,6 +66,10 @@ export function LeaveRoom(id: string, playerId: string) {
   if (i >= 0) {
     room.players.splice(i);
   }
+
+  if (room.players.length === 0) {
+    CloseRoom(id);
+  }
 }
 
 export function CloseRoom(id: string) {
