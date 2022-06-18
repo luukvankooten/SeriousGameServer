@@ -31,7 +31,7 @@ export default class Round extends EventEmitter {
     const i = this.orders.findIndex((i) => i.player === player);
 
     if (i !== -1) {
-      this.orders.splice(i);
+      this.orders.splice(i, 1);
     }
 
     const orderInstance = new Order(order, player, this, type);

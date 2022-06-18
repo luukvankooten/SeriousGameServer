@@ -59,16 +59,23 @@ export function JoinRoom(id: string, playerId: string): [Room, Player] | void {
 }
 
 export function LeaveRoom(id: string, playerId: string) {
-  const room = GetRoom(id);
+  if (!HasRoom(id)) {
+    return;
+  }
 
+  const room = GetRoom(id);
   const i = room.players.findIndex((p) => p.id === playerId);
 
   if (i >= 0) {
-    room.players.splice(i);
+    room.players.splice(i, 1);
   }
 
   if (room.players.length === 0) {
     CloseRoom(id);
+  } else if (room.players.length === 1) {
+    if (room.players[0].id === 'ai') {
+      CloseRoom(id);
+    }
   }
 }
 
