@@ -1,4 +1,4 @@
-import Player from './player.model';
+import Player, { Role } from './player.model';
 import Round from './round.model';
 
 export enum OrderType {
@@ -29,6 +29,8 @@ export function orderTypeToString(type: OrderType): StringOrder {
 export default class Order {
   order: number;
 
+  role: Role;
+
   player: Player;
 
   round: Round;
@@ -37,11 +39,13 @@ export default class Order {
 
   constructor(
     order: number,
+    role: Role,
     player: Player,
     round: Round,
     type: OrderType = OrderType.PROVIDED,
   ) {
     this.order = order;
+    this.role = role;
     this.player = player;
     this.round = round;
     this.type = type;

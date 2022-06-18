@@ -1,5 +1,5 @@
 import { Server, Socket } from 'socket.io';
-import Player from './player.model';
+import Player, { Role } from './player.model';
 import Game from './game.model';
 import EventEmitter from 'events';
 import Order, { OrderType } from './order.model';
@@ -33,13 +33,14 @@ export default class Round extends EventEmitter {
 
     console.log(this.orders);
 
-    const orderInstance = new Order(order, player, this, type);
+    const orderInstance = new Order(order, Role.CUSTOMER, player, this, type);
     this.orders.push(orderInstance);
   }
 
   addOrder(
     _io: Server,
     order: number,
+    role: Role,
     player: Player,
     type: OrderType = OrderType.PROVIDED,
   ) {
@@ -53,7 +54,7 @@ export default class Round extends EventEmitter {
     //   this.orders.splice(i, 1);
     // }
 
-    const orderInstance = new Order(order, player, this, type);
+    const orderInstance = new Order(order, role, player, this, type);
     this.orders.push(orderInstance);
 
     console.log(`Orders: ${this.orders.length}`);

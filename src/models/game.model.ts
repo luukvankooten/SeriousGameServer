@@ -30,7 +30,8 @@ export default class Game extends EventEmitter {
     this.rounds.push(round);
 
     for(let i = 0; i < orders.length; i++) {
-      let destination = this.room.players.find((x) => x.role === orders[i].player.role)?.id ?? '';
+      let destination = this.room.players.find((x) => x.role === orders[i].role)?.id ?? '';
+
       _io.to(destination).emit('game:next', {
         roundLength: this.rounds.length,
         order: orders[i].order ?? 0,

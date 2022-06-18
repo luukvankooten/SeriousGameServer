@@ -1,5 +1,6 @@
 import { Server, Socket } from 'socket.io';
 import { orderTypeFromString } from '../../models/order.model';
+import { roleFromString } from '../../models/player.model';
 import Room from '../../models/room.model';
 
 export default function CreateRoundHandler(
@@ -11,6 +12,7 @@ export default function CreateRoundHandler(
     try {
       const order = Number(data.order);
       const type = orderTypeFromString(data.type);
+      const role = roleFromString(data.role);
 
       if (order === NaN) {
         socket.emit('round:invoice-error', {
@@ -30,7 +32,7 @@ export default function CreateRoundHandler(
         return;
       }
 
-      currentRound.addOrder(_io, order, currentPlayer, type);
+      currentRound.addOrder(_io, order, role, currentPlayer, type);
 
       socket.emit('round:invoice-ok', {
         message: 'Invoice submitted',
