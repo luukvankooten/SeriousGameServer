@@ -1,6 +1,9 @@
+import { Server } from 'socket.io';
 import EventEmitter from 'events';
 import Room from './room.model';
 import Round from './round.model';
+import Order, { OrderType, orderTypeToString } from './order.model';
+import { Role, roleToString } from './player.model';
 
 export default class Game extends EventEmitter {
   rounds: Round[] = [];
@@ -18,17 +21,22 @@ export default class Game extends EventEmitter {
     return this.rounds.length >= 50;
   }
 
-  nextRound() {
+  nextRound(_io: Server, orders: Order[]) {
     if (this.maxRounds()) {
       throw 'Max rounds overwritten';
     }
 
     const round = new Round(this.rounds.length, this.room.players, this);
-
     this.rounds.push(round);
 
-    this.emit('next', round);
-
+    for(let i = 0; i < orders.length; i++) {
+      let destination = this.room.players.find((x) => x.role === orders[i].player.role)?.id ?? '';
+      _io.to(destination).emit('game:next', {
+        roundLength: this.rounds.length,
+        order: orders[i].order ?? 0,
+        type: orderTypeToString(orders[i].type),
+      });
+    }
     return round;
   }
 

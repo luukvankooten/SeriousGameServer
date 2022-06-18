@@ -4,7 +4,7 @@ import Round from './round.model';
 export enum Role {
   RETAILER,
   WHOLESALER,
-  DISTRIBUTER,
+  DISTRIBUTOR,
   MANUFACTURER,
   CUSTOMER,
   EMPTY,
@@ -25,7 +25,7 @@ export function roleFromString(role: string | undefined): Role {
     case 'wholesaler':
       return Role.WHOLESALER;
     case 'distributor':
-      return Role.DISTRIBUTER;
+      return Role.DISTRIBUTOR;
     case 'manufacturer':
       return Role.MANUFACTURER;
     case 'customer':
@@ -39,7 +39,7 @@ export function roleToString(role: Role): RoleString {
   switch (role) {
     case Role.CUSTOMER:
       return 'customer';
-    case Role.DISTRIBUTER:
+    case Role.DISTRIBUTOR:
       return 'distributor';
     case Role.WHOLESALER:
       return 'wholesaler';

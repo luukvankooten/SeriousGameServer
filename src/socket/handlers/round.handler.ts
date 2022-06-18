@@ -30,7 +30,7 @@ export default function CreateRoundHandler(
         return;
       }
 
-      currentRound.addOrder(order, currentPlayer, type);
+      currentRound.addOrder(_io, order, currentPlayer, type);
 
       socket.emit('round:invoice-ok', {
         message: 'Invoice submitted',

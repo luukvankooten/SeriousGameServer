@@ -6,7 +6,7 @@ export default function CustomerAiOrderHandler() {
     const ai = game.room.players.find((p) => p.id === 'ai');
 
     //For now randomInt as ai player: max is 100;
-    if (ai) game.getActiveRound()?.addOrder(randomInt(100), ai);
+    if (ai) game.getActiveRound()?.addOrderAi(randomInt(100), ai);
   };
 
   return handler;
