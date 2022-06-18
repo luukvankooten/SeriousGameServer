@@ -11,6 +11,8 @@ export default class Round extends EventEmitter {
 
   orders: Order[] = [];
 
+  doneCount: number;
+
   game: Game;
 
   constructor(number: number, players: Player[], game: Game) {
@@ -18,6 +20,7 @@ export default class Round extends EventEmitter {
     this.number = number;
     this.players = players;
     this.game = game;
+    this.doneCount = 0;
   }
 
   addOrderAi(
@@ -43,6 +46,7 @@ export default class Round extends EventEmitter {
     role: Role,
     player: Player,
     type: OrderType = OrderType.PROVIDED,
+    done: boolean
   ) {
     if (!this.players.includes(player)) {
       throw 'Player not in room';
@@ -50,19 +54,13 @@ export default class Round extends EventEmitter {
 
     const i = this.orders.findIndex((i) => i.player === player);
 
-    // if (i !== -1) {
-    //   this.orders.splice(i, 1);
-    // }
-
     const orderInstance = new Order(order, role, player, this, type);
     this.orders.push(orderInstance);
+    this.doneCount += done ? 1 : 0;
 
-    console.log(`Orders: ${this.orders.length}`);
-
-    if (
-      this.orders.length === this.players.length * 2 &&
-      !this.game.maxRounds()
+    if (this.doneCount === this.players.length && !this.game.maxRounds()
     ) {
+      this.doneCount = 0;
       this.game.nextRound(_io, this.orders);
     }
   }

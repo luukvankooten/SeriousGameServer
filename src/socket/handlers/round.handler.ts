@@ -12,7 +12,8 @@ export default function CreateRoundHandler(
     try {
       const order = Number(data.order);
       const type = orderTypeFromString(data.type);
-      const role = roleFromString(data.role);
+      const role = roleFromString(data.role);    
+      const done: boolean = data.done;
 
       if (order === NaN) {
         socket.emit('round:invoice-error', {
@@ -32,7 +33,7 @@ export default function CreateRoundHandler(
         return;
       }
 
-      currentRound.addOrder(_io, order, role, currentPlayer, type);
+      currentRound.addOrder(_io, order, role, currentPlayer, type, done);
 
       socket.emit('round:invoice-ok', {
         message: 'Invoice submitted',
