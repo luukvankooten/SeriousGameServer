@@ -13,8 +13,8 @@ export enum Role {
 type RoleString =
   | 'retailer'
   | 'wholesaler'
-  | 'distributer'
-  | 'manufacture'
+  | 'distributor'
+  | 'manufacturer'
   | 'customer'
   | 'empty';
 
@@ -24,9 +24,9 @@ export function roleFromString(role: string | undefined): Role {
       return Role.RETAILER;
     case 'wholesaler':
       return Role.WHOLESALER;
-    case 'distributer':
+    case 'distributor':
       return Role.DISTRIBUTER;
-    case 'manufacture':
+    case 'manufacturer':
       return Role.MANUFACTURER;
     case 'customer':
       return Role.CUSTOMER;
@@ -40,13 +40,13 @@ export function roleToString(role: Role): RoleString {
     case Role.CUSTOMER:
       return 'customer';
     case Role.DISTRIBUTER:
-      return 'distributer';
+      return 'distributor';
     case Role.WHOLESALER:
       return 'wholesaler';
     case Role.RETAILER:
       return 'retailer';
     case Role.MANUFACTURER:
-      return 'manufacture';
+      return 'manufacturer';
     default:
       return 'empty';
   }
