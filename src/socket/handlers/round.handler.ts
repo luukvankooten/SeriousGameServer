@@ -8,27 +8,38 @@ export default function CreateRoundHandler(
   room: Room,
 ) {
   socket.on('round:invoice', (data) => {
-    const order = Number(data.order);
-    const type = orderTypeFromString(data.type);
+    try {
+      const order = Number(data.order);
+      const type = orderTypeFromString(data.type);
 
-    if (order === NaN) {
-      socket.emit('error', {
-        message: 'order is not an number',
+      if (order === NaN) {
+        socket.emit('round:invoice-error', {
+          message: 'Order is not a number',
+        });
+        return;
+      }
+
+      const currentPlayer = room.getPlayer(socket.id);
+
+      const currentRound = room.game?.getActiveRound();
+
+      if (!(currentPlayer && currentRound)) {
+        socket.emit('round:invoice-error', {
+          message: 'No current player or current round',
+        });
+        return;
+      }
+
+      currentRound.addOrder(order, currentPlayer, type);
+
+      socket.emit('round:invoice-ok', {
+        message: 'Invoice submitted',
       });
-      return;
-    }
-
-    const currentPlayer = room.getPlayer(socket.id);
-
-    const currentRound = room.game?.getActiveRound();
-
-    if (!(currentPlayer && currentRound)) {
-      socket.emit('error', {
-        message: 'No current player or current round',
+    } catch (e) {
+      socket.emit('round:invoice-error', {
+        message: `Server error ${e}`,
       });
-      return;
+      console.error(e);
     }
-
-    currentRound.addOrder(order, currentPlayer, type);
   });
 }
