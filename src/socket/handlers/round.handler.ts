@@ -18,6 +18,7 @@ export default function CreateRoundHandler(
       if (order === NaN) {
         socket.emit('round:invoice-error', {
           message: 'Order is not a number',
+          data
         });
         return;
       }
@@ -29,6 +30,7 @@ export default function CreateRoundHandler(
       if (!(currentPlayer && currentRound)) {
         socket.emit('round:invoice-error', {
           message: 'No current player or current round',
+          data
         });
         return;
       }
@@ -37,10 +39,12 @@ export default function CreateRoundHandler(
 
       socket.emit('round:invoice-ok', {
         message: 'Invoice submitted',
+        data
       });
     } catch (e) {
       socket.emit('round:invoice-error', {
         message: `Server error ${e}`,
+        data
       });
       console.error(e);
     }
