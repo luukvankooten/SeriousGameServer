@@ -26,16 +26,29 @@ export default class Game extends EventEmitter {
       throw 'Max rounds overwritten';
     }
 
+    const provOrders = orders.filter((x) => x.type === OrderType.PROVIDED);
+    const reqOrders = orders.filter((x) => x.type === OrderType.REQUESTED);
+
     const round = new Round(this.rounds.length, this.room.players, this);
     this.rounds.push(round);
 
-    for(let i = 0; i < orders.length; i++) {
-      let destination = this.room.players.find((x) => x.role === orders[i].role)?.id ?? '';
+    for(let i = 0; i < provOrders.length; i++) {
+      let destination = this.room.players.find((x) => x.role === provOrders[i].role)?.id ?? '';
 
       _io.to(destination).emit('game:next', {
         roundLength: this.rounds.length,
-        order: orders[i].order ?? 0,
-        type: orderTypeToString(orders[i].type),
+        order: provOrders[i].order ?? 0,
+        type: orderTypeToString(provOrders[i].type),
+      });
+    }
+
+    for(let i = 0; i < reqOrders.length; i++) {
+      let destination = this.room.players.find((x) => x.role === reqOrders[i].role)?.id ?? '';
+
+      _io.to(destination).emit('game:next', {
+        roundLength: this.rounds.length,
+        order: reqOrders[i].order ?? 0,
+        type: orderTypeToString(reqOrders[i].type),
       });
     }
     return round;
