@@ -8,7 +8,7 @@ export default function CreateRoundHandler(
   socket: Socket,
   room: Room,
 ) {
-  socket.on('round:invoice', (data) => {
+  socket.on('round:invoice', (data, callback: Function) => {
     try {
       const order = Number(data.order);
       const type = orderTypeFromString(data.type);
@@ -38,9 +38,14 @@ export default function CreateRoundHandler(
       currentRound.addOrder(_io, order, role, currentPlayer, type, done);
 
       socket.emit('round:invoice-ok', {
-        message: 'Invoice submitted',
         data
       });
+
+      if (callback) {
+        callback({
+          data
+        });
+      }
     } catch (e) {
       socket.emit('round:invoice-error', {
         message: `Server error ${e}`,

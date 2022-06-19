@@ -37,6 +37,7 @@ export default class Game extends EventEmitter {
 
       _io.to(destination).emit('game:next', {
         roundLength: this.rounds.length,
+        role: provOrders[i].role,
         order: provOrders[i].order ?? 0,
         type: orderTypeToString(provOrders[i].type),
       });
@@ -47,10 +48,23 @@ export default class Game extends EventEmitter {
 
       _io.to(destination).emit('game:next', {
         roundLength: this.rounds.length,
+        role: provOrders[i].role,
         order: reqOrders[i].order ?? 0,
         type: orderTypeToString(reqOrders[i].type),
       });
     }
+
+    // Customer needs game:next aswell, even though no orders are available for the customer
+    let customerId = this.room.players.find((x) => x.role === Role.CUSTOMER)?.id;
+    if (customerId) {
+      _io.to(customerId).emit('game:next', {
+        roundLength: this.rounds.length,
+        role: Role.CUSTOMER,
+        order: 0,
+        type: OrderType.REQUESTED,
+      });
+    }
+
     return round;
   }
 
