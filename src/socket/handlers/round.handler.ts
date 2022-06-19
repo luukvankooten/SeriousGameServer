@@ -1,6 +1,6 @@
 import { Server, Socket } from 'socket.io';
-import { orderTypeFromString } from '../../models/order.model';
-import { roleFromString } from '../../models/player.model';
+import { orderTypeFromString, orderTypeToString } from '../../models/order.model';
+import { roleFromString, roleToString } from '../../models/player.model';
 import Room from '../../models/room.model';
 
 export default function CreateRoundHandler(
@@ -39,16 +39,16 @@ export default function CreateRoundHandler(
 
       socket.emit('round:invoice-ok', {
         order: data.order,
-        type: orderTypeFromString(data.type),
-        role: roleFromString(data.role),
+        type: data.type,
+        role: data.role,
         done: data.done
       });
 
       if (callback) {
         callback({
           order: data.order,
-          type: orderTypeFromString(data.type),
-          role: roleFromString(data.role),
+          type: data.type,
+          role: data.role,
           done: data.done
         });
       }
