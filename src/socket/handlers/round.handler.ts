@@ -38,12 +38,18 @@ export default function CreateRoundHandler(
       currentRound.addOrder(_io, order, role, currentPlayer, type, done);
 
       socket.emit('round:invoice-ok', {
-        data
+        order: data.order,
+        type: data.type,
+        role: data.role,
+        done: data.done
       });
 
       if (callback) {
         callback({
-          data
+          order: data.order,
+          type: data.type,
+          role: data.role,
+          done: data.done
         });
       }
     } catch (e) {

@@ -57,7 +57,7 @@ export default class Game extends EventEmitter {
     if (customerId) {
       _io.to(customerId).emit('game:next', {
         roundLength: this.rounds.length,
-        role: Role.CUSTOMER,
+        role: roleToString(Role.CUSTOMER),
         order: 0,
         type: OrderType.REQUESTED,
       });
