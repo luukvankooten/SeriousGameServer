@@ -37,7 +37,6 @@ export default class Game extends EventEmitter {
 
       _io.to(destination).emit('game:next', {
         roundLength: this.rounds.length,
-        role: provOrders[i].role,
         order: provOrders[i].order ?? 0,
         type: orderTypeToString(provOrders[i].type),
       });
@@ -48,7 +47,6 @@ export default class Game extends EventEmitter {
 
       _io.to(destination).emit('game:next', {
         roundLength: this.rounds.length,
-        role: provOrders[i].role,
         order: reqOrders[i].order ?? 0,
         type: orderTypeToString(reqOrders[i].type),
       });
