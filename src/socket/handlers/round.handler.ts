@@ -39,16 +39,16 @@ export default function CreateRoundHandler(
 
       socket.emit('round:invoice-ok', {
         order: data.order,
-        type: data.type,
-        role: data.role,
+        type: orderTypeFromString(data.type),
+        role: roleFromString(data.role),
         done: data.done
       });
 
       if (callback) {
         callback({
           order: data.order,
-          type: data.type,
-          role: data.role,
+          type: orderTypeFromString(data.type),
+          role: roleFromString(data.role),
           done: data.done
         });
       }
