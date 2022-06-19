@@ -58,8 +58,7 @@ export default class Round extends EventEmitter {
     this.orders.push(orderInstance);
     this.doneCount += done ? 1 : 0;
 
-    if (this.doneCount === this.players.length && !this.game.maxRounds()
-    ) {
+    if (this.doneCount === this.players.length && !this.game.maxRounds()) {
       this.doneCount = 0;
       this.game.nextRound(_io, this.orders);
     }

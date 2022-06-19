@@ -6,6 +6,7 @@ import CreateDisconectionHandler from './handlers/disconnection.handler';
 import CreateStartGameHandler from './handlers/start-game.handler';
 import CreateAssignRoleHandler from './handlers/assign-role.handler';
 import CreateRoundHandler from './handlers/round.handler';
+import CreateMessageHandler from './handlers/message.handler';
 
 export default function SocketIOFactory(
   srv?: undefined | Partial<ServerOptions> | http.Server | HTTPSServer | number,
@@ -35,6 +36,7 @@ export default function SocketIOFactory(
     CreateStartGameHandler(server, socket, room);
     CreateAssignRoleHandler(server, socket, room);
     CreateRoundHandler(server, socket, room);
+    CreateMessageHandler(server, socket, room);
   };
 
   server.on('connection', onConnection);
