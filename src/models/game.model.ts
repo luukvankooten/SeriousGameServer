@@ -6,12 +6,15 @@ import Order, { OrderType, orderTypeToString } from './order.model';
 import { Role, roleToString } from './player.model';
 
 export default class Game extends EventEmitter {
+  _io: Server;
+
   rounds: Round[] = [];
 
   room: Room;
 
-  constructor(room: Room) {
+  constructor(io: Server, room: Room) {
     super();
+    this._io = io;
     this.room = room;
     //Push the first round on init
     this.rounds.push(new Round(this.rounds.length, room.players, this));
@@ -21,8 +24,13 @@ export default class Game extends EventEmitter {
     return this.rounds.length >= 50;
   }
 
-  nextRound(_io: Server, orders: Order[]) {
+  nextRound(orders: Order[]) {
     if (this.maxRounds()) {
+      const history = this.room.game?.getHistory() ?? [];
+      this._io.emit('game:end', {
+        message: "Max turns reached, game concluded",
+        history
+      });
       throw 'Max rounds overwritten';
     }
 
@@ -35,7 +43,7 @@ export default class Game extends EventEmitter {
     for(let i = 0; i < provOrders.length; i++) {
       let destination = this.room.players.find((x) => x.role === provOrders[i].role)?.id ?? '';
 
-      _io.to(destination).emit('game:next', {
+      this._io.to(destination).emit('game:next', {
         roundLength: this.rounds.length,
         order: provOrders[i].order ?? 0,
         type: orderTypeToString(provOrders[i].type),
@@ -45,7 +53,7 @@ export default class Game extends EventEmitter {
     for(let i = 0; i < reqOrders.length; i++) {
       let destination = this.room.players.find((x) => x.role === reqOrders[i].role)?.id ?? '';
 
-      _io.to(destination).emit('game:next', {
+      this._io.to(destination).emit('game:next', {
         roundLength: this.rounds.length,
         order: reqOrders[i].order ?? 0,
         type: orderTypeToString(reqOrders[i].type),
@@ -55,7 +63,7 @@ export default class Game extends EventEmitter {
     // Customer needs game:next aswell, even though no orders are available for the customer
     let customerId = this.room.players.find((x) => x.role === Role.CUSTOMER)?.id;
     if (customerId) {
-      _io.to(customerId).emit('game:next', {
+      this._io.to(customerId).emit('game:next', {
         roundLength: this.rounds.length,
         role: roleToString(Role.CUSTOMER),
         order: 0,
@@ -64,6 +72,21 @@ export default class Game extends EventEmitter {
     }
 
     return round;
+  }
+
+  getHistory() {
+    return this.getRounds().map((x) => ({
+      roundLength: x.number,
+      orders: x.orders.map((o) => ({
+        order: o.order,
+        type: orderTypeToString(o.type),
+        role: roleToString(o.role)
+      })),
+    }));
+  }
+
+  getRounds(): Round[] {
+    return this.rounds;
   }
 
   getActiveRound(): Round | undefined {

@@ -10,7 +10,7 @@ export default function CreateStartGameHandler(
   socket.once('game:start', () => {
     const [handler] = RegisterRoomGameStartedHandler(io, socket, room);
     try {
-      room.startGame();
+      room.startGame(io);
     } catch (e) {
       socket.emit('error', e);
       console.error(e);

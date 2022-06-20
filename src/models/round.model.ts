@@ -32,10 +32,6 @@ export default class Round extends EventEmitter {
       throw 'Player not in room';
     }
 
-    const i = this.orders.findIndex((i) => i.player === player);
-
-    console.log(this.orders);
-
     const orderInstance = new Order(order, Role.CUSTOMER, player, this, type);
     this.orders.push(orderInstance);
   }
@@ -52,15 +48,13 @@ export default class Round extends EventEmitter {
       throw 'Player not in room';
     }
 
-    const i = this.orders.findIndex((i) => i.player === player);
-
     const orderInstance = new Order(order, role, player, this, type);
     this.orders.push(orderInstance);
     this.doneCount += done ? 1 : 0;
 
     if (this.doneCount === this.players.length && !this.game.maxRounds()) {
       this.doneCount = 0;
-      this.game.nextRound(_io, this.orders);
+      this.game.nextRound(this.orders);
     }
   }
 }

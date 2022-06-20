@@ -1,4 +1,5 @@
 import EventEmitter from 'events';
+import { Server } from 'socket.io';
 import Game from './game.model';
 import Player, { Role } from './player.model';
 
@@ -46,12 +47,12 @@ export default class Room extends EventEmitter {
     );
   }
 
-  startGame() {
+  startGame(_io: Server) {
     if (!this.canStartGame()) {
       throw 'The game could not be started';
     }
 
-    this.game = new Game(this);
+    this.game = new Game(_io, this);
 
     if (this.players.length === 4) {
       this.players.push(
@@ -60,7 +61,6 @@ export default class Room extends EventEmitter {
     }
 
     this.emit('game:started', this.game);
-
     return this.game;
   }
 }

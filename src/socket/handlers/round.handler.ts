@@ -24,7 +24,6 @@ export default function CreateRoundHandler(
       }
 
       const currentPlayer = room.getPlayer(socket.id);
-
       const currentRound = room.game?.getActiveRound();
 
       if (!(currentPlayer && currentRound)) {

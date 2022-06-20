@@ -1,4 +1,5 @@
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from 'fastify';
+import { Server } from 'socket.io';
 import { Role, roleToString } from '../../models/player.model';
 import * as RoomService from '../../services/rooms.service';
 
@@ -10,6 +11,50 @@ async function GetRooms() {
       name: entry[1].name,
       uri: `${process.env.APP_URL}/?roomUri=${entry[0]}`,
     }));
+}
+
+async function DeleteRoom(
+  request: FastifyRequest<{ Querystring: { roomUri: string } }>,
+) {
+  try {
+    if (!RoomService.HasRoom(request.query.roomUri)) {
+      return {
+        deleted: false,
+        message: "Room does not exist",
+      }
+    }
+
+    const room = RoomService.GetRoom(request.query.roomUri);
+    if (room.players.length > 0) {
+      if (room.isOpen()) {
+        const history = RoomService.GetRoom(room.id).game?.getHistory() ?? [];
+        if (room.game?._io) {
+          room.game?._io.emit('game:end', {
+            message: `The room has been closed externally, game concluded`,
+            history
+          });
+          room.game?._io.disconnectSockets(true);
+        }
+      } else {
+        return {
+          deleted: false,
+          message: "Room lobby is not empty",
+        }
+      }
+    }
+
+    RoomService.CloseRoom(request.query.roomUri);    
+    
+    return {
+      deleted: true,
+      message: "Room is deleted",
+    }
+  } catch (e) {
+    return {
+      deleted: false,
+      message: `An error ocurred during the operation: ${e}`,
+    }
+  }
 }
 
 async function GetAvailableRolesInRoom(
@@ -75,6 +120,19 @@ export default async function RegisterRoomController(
       },
     },
     AddRoom,
+  );
+
+  server.delete(
+    '/rooms',
+    {
+      schema: {
+        response: {
+          deleted: { type: 'boolean' },
+          message: { type: 'string' },
+        },
+      },
+    },
+    DeleteRoom,
   );
 
   server.get(
