@@ -11,8 +11,8 @@ export default function CreateRoundHandler(
   socket.on('round:invoice', (data, callback: Function) => {
     try {
       const order = Number(data.order);
-      const type = orderTypeFromString(data.type);
-      const role = roleFromString(data.role);    
+      const type = orderTypeFromString(String(data.type).toLowerCase());
+      const role = roleFromString(String(data.role).toLowerCase());    
       const done: boolean = data.done;
 
       if (order === NaN) {

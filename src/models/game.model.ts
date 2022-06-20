@@ -59,7 +59,7 @@ export default class Game extends EventEmitter {
         roundLength: this.rounds.length,
         role: roleToString(Role.CUSTOMER),
         order: 0,
-        type: OrderType.REQUESTED,
+        type: orderTypeToString(OrderType.REQUESTED),
       });
     }
 
