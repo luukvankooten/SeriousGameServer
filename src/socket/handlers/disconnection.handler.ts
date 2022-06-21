@@ -10,12 +10,15 @@ export default function CreateDisconectionHandler(
   room: Room,
 ) {
   const onDisconnection = () => {
-    const leaver = roleToString(RoomService.GetRoom(room.id).players.find((x) => x.id === socket.id)?.role ?? Role.EMPTY);
+    const leaver = roleToString(
+      RoomService.GetRoom(room.id).players.find((x) => x.id === socket.id)
+        ?.role ?? Role.EMPTY,
+    );
     const history = RoomService.GetRoom(room.id).game?.getHistory() ?? [];
 
     _io.emit('game:end', {
       message: `${leaver} left the game, game concluded`,
-      history
+      history,
     });
     LeaveRoom(room.id, socket.id);
     socket.removeAllListeners();

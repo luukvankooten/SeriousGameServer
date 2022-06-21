@@ -10,12 +10,15 @@ export default function CreateEndGameHandler(
   room: Room,
 ) {
   socket.once('game:end', () => {
-    const ender = roleToString(RoomService.GetRoom(room.id).players.find((x) => x.id === socket.id)?.role ?? Role.EMPTY);
+    const ender = roleToString(
+      RoomService.GetRoom(room.id).players.find((x) => x.id === socket.id)
+        ?.role ?? Role.EMPTY,
+    );
     const history = RoomService.GetRoom(room.id).game?.getHistory() ?? [];
 
     _io.emit('game:end', {
       message: `${ender} has ended the game, game concluded`,
-      history
+      history,
     });
     LeaveRoom(room.id, socket.id);
     socket.removeAllListeners();

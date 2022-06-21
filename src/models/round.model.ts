@@ -42,7 +42,7 @@ export default class Round extends EventEmitter {
     role: Role,
     player: Player,
     type: OrderType = OrderType.PROVIDED,
-    done: boolean
+    done: boolean,
   ) {
     if (!this.players.includes(player)) {
       throw 'Player not in room';

@@ -1,5 +1,8 @@
 import { Server, Socket } from 'socket.io';
-import { orderTypeFromString, orderTypeToString } from '../../models/order.model';
+import {
+  orderTypeFromString,
+  orderTypeToString,
+} from '../../models/order.model';
 import { roleFromString, roleToString } from '../../models/player.model';
 import Room from '../../models/room.model';
 
@@ -12,13 +15,13 @@ export default function CreateRoundHandler(
     try {
       const order = Number(data.order);
       const type = orderTypeFromString(String(data.type).toLowerCase());
-      const role = roleFromString(String(data.role).toLowerCase());    
+      const role = roleFromString(String(data.role).toLowerCase());
       const done: boolean = data.done;
 
       if (order === NaN) {
         socket.emit('round:invoice-error', {
           message: 'Order is not a number',
-          data
+          data,
         });
         return;
       }
@@ -29,7 +32,7 @@ export default function CreateRoundHandler(
       if (!(currentPlayer && currentRound)) {
         socket.emit('round:invoice-error', {
           message: 'No current player or current round',
-          data
+          data,
         });
         return;
       }
@@ -40,7 +43,7 @@ export default function CreateRoundHandler(
         order: data.order,
         type: data.type,
         role: data.role,
-        done: data.done
+        done: data.done,
       });
 
       if (callback) {
@@ -48,13 +51,13 @@ export default function CreateRoundHandler(
           order: data.order,
           type: data.type,
           role: data.role,
-          done: data.done
+          done: data.done,
         });
       }
     } catch (e) {
       socket.emit('round:invoice-error', {
         message: `Server error ${e}`,
-        data
+        data,
       });
       console.error(e);
     }

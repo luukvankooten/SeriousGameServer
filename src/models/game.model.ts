@@ -28,8 +28,8 @@ export default class Game extends EventEmitter {
     if (this.maxRounds()) {
       const history = this.room.game?.getHistory() ?? [];
       this._io.emit('game:end', {
-        message: "Max turns reached, game concluded",
-        history
+        message: 'Max turns reached, game concluded',
+        history,
       });
       throw 'Max rounds overwritten';
     }
@@ -40,8 +40,9 @@ export default class Game extends EventEmitter {
     const round = new Round(this.rounds.length, this.room.players, this);
     this.rounds.push(round);
 
-    for(let i = 0; i < provOrders.length; i++) {
-      let destination = this.room.players.find((x) => x.role === provOrders[i].role)?.id ?? '';
+    for (let i = 0; i < provOrders.length; i++) {
+      const destination =
+        this.room.players.find((x) => x.role === provOrders[i].role)?.id ?? '';
 
       this._io.to(destination).emit('game:next', {
         roundLength: this.rounds.length,
@@ -50,8 +51,9 @@ export default class Game extends EventEmitter {
       });
     }
 
-    for(let i = 0; i < reqOrders.length; i++) {
-      let destination = this.room.players.find((x) => x.role === reqOrders[i].role)?.id ?? '';
+    for (let i = 0; i < reqOrders.length; i++) {
+      const destination =
+        this.room.players.find((x) => x.role === reqOrders[i].role)?.id ?? '';
 
       this._io.to(destination).emit('game:next', {
         roundLength: this.rounds.length,
@@ -61,7 +63,9 @@ export default class Game extends EventEmitter {
     }
 
     // Customer needs game:next aswell, even though no orders are available for the customer
-    let customerId = this.room.players.find((x) => x.role === Role.CUSTOMER)?.id;
+    const customerId = this.room.players.find(
+      (x) => x.role === Role.CUSTOMER,
+    )?.id;
     if (customerId) {
       this._io.to(customerId).emit('game:next', {
         roundLength: this.rounds.length,
@@ -80,7 +84,7 @@ export default class Game extends EventEmitter {
       orders: x.orders.map((o) => ({
         order: o.order,
         type: orderTypeToString(o.type),
-        role: roleToString(o.role)
+        role: roleToString(o.role),
       })),
     }));
   }

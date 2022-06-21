@@ -20,8 +20,8 @@ async function DeleteRoom(
     if (!RoomService.HasRoom(request.query.roomUri)) {
       return {
         deleted: false,
-        message: "Room does not exist",
-      }
+        message: 'Room does not exist',
+      };
     }
 
     const room = RoomService.GetRoom(request.query.roomUri);
@@ -31,29 +31,29 @@ async function DeleteRoom(
         if (room.game?._io) {
           room.game?._io.emit('game:end', {
             message: `The room has been closed externally, game concluded`,
-            history
+            history,
           });
           room.game?._io.disconnectSockets(true);
         }
       } else {
         return {
           deleted: false,
-          message: "Room lobby is not empty",
-        }
+          message: 'Room lobby is not empty',
+        };
       }
     }
 
-    RoomService.CloseRoom(request.query.roomUri);    
-    
+    RoomService.CloseRoom(request.query.roomUri);
+
     return {
       deleted: true,
-      message: "Room is deleted",
-    }
+      message: 'Room is deleted',
+    };
   } catch (e) {
     return {
       deleted: false,
       message: `An error ocurred during the operation: ${e}`,
-    }
+    };
   }
 }
 
