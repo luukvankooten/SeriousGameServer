@@ -48,12 +48,12 @@ export default function CreateMessageHandler(
             throw error;
           });
       } else {
-        socket.emit('round:message-error', {
+        callback?.call(null, {
           message: 'Role is empty',
         });
       }
     } catch (e) {
-      socket.emit('round:message-error', {
+      callback?.call(null, {
         message: `Server error ${e}`,
       });
       console.error(e);
