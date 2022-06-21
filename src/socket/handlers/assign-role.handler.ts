@@ -20,6 +20,10 @@ export default function CreateAssignRoleHandler(
           message: 'Role assigned',
         });
       };
+
+      io.emit("role:assigned", {
+        role: data.role
+      })
     } catch (e) {
       if (callback) {
         callback({
