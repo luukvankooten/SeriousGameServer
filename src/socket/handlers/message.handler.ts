@@ -8,7 +8,7 @@ export default function CreateMessageHandler(
   socket: Socket,
   room: Room,
 ) {
-  socket.on('round:message', (data) => {
+  socket.on('round:message', (data, callback: Function | undefined) => {
     try {
       const lang = data.lang;
       const message = data.message;
@@ -21,34 +21,36 @@ export default function CreateMessageHandler(
 
       const currentPlayer = room.getPlayer(socket.id);
       if (currentPlayer?.role !== Role.EMPTY) {
-        let formdata = new URLSearchParams();
-        formdata.append("text", message);
-        formdata.append("language", lang);
+        const formdata = new URLSearchParams();
+        formdata.append('text', message);
+        formdata.append('language', lang);
 
-        fetch("http://text-processing.com/api/sentiment/", {
-            method: 'POST',
-            body: formdata,
-            redirect: 'follow'
+        fetch('http://text-processing.com/api/sentiment/', {
+          method: 'POST',
+          body: formdata,
+          redirect: 'follow',
         })
-        .then(res => res.json())
-        .then(res => {
-            socket.emit('round:message-ack', {
-                message: message,
-                sentiment: res,
+          .then((res) => res.json())
+          .then((res) => {
+            // socket.emit('round:message-ack', {});
+            callback?.call(null, {
+              message: message,
+              sentiment: res,
             });
+
             _io.except(socket.id).emit('round:message-receive', {
-                message: message,
-                from: roleToString(currentPlayer?.role ?? Role.EMPTY),
-                sentiment: res,
+              message: message,
+              from: roleToString(currentPlayer?.role ?? Role.EMPTY),
+              sentiment: res,
             });
-        })
-        .catch(error => {
-            throw error
-        });
+          })
+          .catch((error) => {
+            throw error;
+          });
       } else {
         socket.emit('round:message-error', {
-            message: 'Role is empty',
-          });
+          message: 'Role is empty',
+        });
       }
     } catch (e) {
       socket.emit('round:message-error', {
