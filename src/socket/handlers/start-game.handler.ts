@@ -7,10 +7,11 @@ export default function CreateStartGameHandler(
   socket: Socket,
   room: Room,
 ) {
-  socket.once('game:start', () => {
+  socket.once('game:start', (data) => {
     const [handler] = RegisterRoomGameStartedHandler(io, socket, room);
     try {
-      room.startGame(io);
+      const chatEnabled = Boolean(data.chat ?? false);
+      room.startGame(io, chatEnabled);
     } catch (e) {
       socket.emit('error', e);
       console.error(e);

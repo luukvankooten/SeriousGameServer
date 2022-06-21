@@ -47,12 +47,13 @@ export default class Room extends EventEmitter {
     );
   }
 
-  startGame(_io: Server) {
+  startGame(_io: Server, chat: boolean) {
     if (!this.canStartGame()) {
       throw 'The game could not be started';
     }
 
     this.game = new Game(_io, this);
+    this.game.chat = chat;
 
     if (this.players.length === 4) {
       this.players.push(

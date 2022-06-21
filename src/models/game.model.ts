@@ -12,10 +12,13 @@ export default class Game extends EventEmitter {
 
   room: Room;
 
+  chat: boolean;
+
   constructor(io: Server, room: Room) {
     super();
     this._io = io;
     this.room = room;
+    this.chat = false;
     //Push the first round on init
     this.rounds.push(new Round(this.rounds.length, room.players, this));
   }

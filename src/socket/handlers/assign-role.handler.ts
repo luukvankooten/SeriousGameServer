@@ -20,8 +20,6 @@ export default function CreateAssignRoleHandler(
           message: 'Role assigned',
         });
       };
-
-      io.to(room.id).emit('role:assigned', roleToString(role));
     } catch (e) {
       if (callback) {
         callback({
