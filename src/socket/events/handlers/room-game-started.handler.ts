@@ -21,7 +21,9 @@ export default function RegisterRoomGameStartedHandler(
       role: roleToString(player.role),
     }));
 
-    io.to(room.id).emit('game:started', players);
+    io.to(room.id).emit('game:started', {
+      chat: game.chat
+    });
   };
 
   room.on('game:started', handler);
