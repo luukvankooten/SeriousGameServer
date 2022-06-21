@@ -7,22 +7,28 @@ export default function CreateAssignRoleHandler(
   socket: Socket,
   room: Room,
 ) {
-  socket.on('role:assign', (data) => {
+  socket.on('role:assign', (data, callback: Function) => {
     const role = roleFromString(String(data.role));
 
     try {
       const user = room.getPlayer(socket.id);
       user?.assignRole(role);
 
-      socket.emit('role:assign-ok', {
-        message: 'Role assigned',
-      });
+      if (callback) {
+        callback({
+          ok: true,
+          message: 'Role assigned',
+        });
+      };
 
       io.to(room.id).emit('role:assigned', roleToString(role));
     } catch (e) {
-      socket.emit('role:assign-error', {
-        message: 'Role already assigned',
-      });
+      if (callback) {
+        callback({
+          ok: false,
+          message: 'Role already assigned',
+        });
+      };
       console.error(e);
     }
   });

@@ -8,12 +8,13 @@ export default function CreateMessageHandler(
   socket: Socket,
   room: Room,
 ) {
-  socket.on('round:message', (data) => {
+  socket.on('round:message', (data, callback: Function) => {
     try {
       const lang = data.lang;
       const message = data.message;
       if (!message) {
-        socket.emit('round:message-error', {
+        callback({
+          ok: false,
           message: 'Message is empty',
         });
         return;
@@ -32,10 +33,13 @@ export default function CreateMessageHandler(
         })
         .then(res => res.json())
         .then(res => {
-            socket.emit('round:message-ack', {
+            if (callback) {
+              callback({
+                ok: true,
                 message: message,
                 sentiment: res,
-            });
+              });
+            };
             _io.except(socket.id).emit('round:message-receive', {
                 message: message,
                 from: roleToString(currentPlayer?.role ?? Role.EMPTY),
@@ -46,14 +50,20 @@ export default function CreateMessageHandler(
             throw error
         });
       } else {
-        socket.emit('round:message-error', {
+        if (callback) {
+          callback({
+            ok: false,
             message: 'Role is empty',
           });
+        }
       }
     } catch (e) {
-      socket.emit('round:message-error', {
-        message: `Server error ${e}`,
-      });
+      if (callback) {
+        callback({
+          ok: false,
+          message: `Server error ${e}`,
+        });
+      }
       console.error(e);
     }
   });

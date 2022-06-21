@@ -16,10 +16,13 @@ export default function CreateRoundHandler(
       const done: boolean = data.done;
 
       if (order === NaN) {
-        socket.emit('round:invoice-error', {
-          message: 'Order is not a number',
-          data
-        });
+        if (callback) {
+          callback({
+            ok: false,
+            message: 'Order is not a number',
+            data
+          });
+        }
         return;
       }
 
@@ -27,24 +30,21 @@ export default function CreateRoundHandler(
       const currentRound = room.game?.getActiveRound();
 
       if (!(currentPlayer && currentRound)) {
-        socket.emit('round:invoice-error', {
-          message: 'No current player or current round',
-          data
-        });
+        if (callback) {
+          callback({
+            ok: false,
+            message: 'No current player or current round',
+            data
+          });
+        }
         return;
       }
 
       currentRound.addOrder(_io, order, role, currentPlayer, type, done);
 
-      socket.emit('round:invoice-ok', {
-        order: data.order,
-        type: data.type,
-        role: data.role,
-        done: data.done
-      });
-
       if (callback) {
         callback({
+          ok: true,
           order: data.order,
           type: data.type,
           role: data.role,
@@ -52,10 +52,13 @@ export default function CreateRoundHandler(
         });
       }
     } catch (e) {
-      socket.emit('round:invoice-error', {
-        message: `Server error ${e}`,
-        data
-      });
+      if (callback) {
+        callback({
+          ok: false,
+          message: `Server error ${e}`,
+          data
+        });
+      }
       console.error(e);
     }
   });

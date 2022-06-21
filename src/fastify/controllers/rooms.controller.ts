@@ -1,5 +1,4 @@
 import { FastifyInstance, FastifyPluginOptions, FastifyRequest } from 'fastify';
-import { Server } from 'socket.io';
 import { Role, roleToString } from '../../models/player.model';
 import * as RoomService from '../../services/rooms.service';
 
